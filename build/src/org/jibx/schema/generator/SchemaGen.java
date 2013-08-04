@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.jibx.binding.Utility;
 import org.jibx.binding.model.BindingElement;
@@ -111,7 +112,7 @@ public class SchemaGen
     private final Map m_classSimpletypes;
     
     /** Map from namespace to schema file name. */
-    private final Map m_uriNames;
+    private final Map<String,String> m_uriNames;
     
     /** Map from namespace to schema holder. */
     private final Map m_uriSchemas;
@@ -166,6 +167,7 @@ public class SchemaGen
                 if (sname == null) {
                     sname = uri.substring(uri.lastIndexOf('/') + 1) + ".xsd";
                 }
+                System.out.println(uri + " => " + sname);
             }
             hold.setFileName(sname);
         }
@@ -595,7 +597,9 @@ public class SchemaGen
             
             // unordered non-repeat treated as all compositor
             // TODO: verify conditions for all
-            cdef = new AllElement();
+            // cdef = new AllElement();
+            // GRZE:NOTE: yeah, not all conditions work out; default to a sequence.
+            cdef = new SequenceElement();
         }
         
         // generate schema equivalents for content components of container
@@ -658,17 +662,17 @@ public class SchemaGen
                         
                         // handle mapping reference based on form and name use
                         MappingDetail detail = m_detailDirectory.getMappingDetail(ref);
-                        if (ref.isAbstract()) {
-                            
-                            // abstract inline treated as group
-                            GroupRefElement group = new GroupRefElement();
-                            setGroupRef(detail.getOtherName(), group, hold);
-                            if (comp.isOptional()) {
-                                group.setMinOccurs(Count.COUNT_ZERO);
-                            }
-                            cdef.getParticleList().add(group);
-                            
-                        } else {
+//                        if (ref.isAbstract()) {
+//                            
+//                            // abstract inline treated as group
+//                            GroupRefElement group = new GroupRefElement();
+//                            setGroupRef(detail.getOtherName(), group, hold);
+//                            if (comp.isOptional()) {
+//                                group.setMinOccurs(Count.COUNT_ZERO);
+//                            }
+//                            cdef.getParticleList().add(group);
+//                            
+//                        } else {
                             
                             // concrete treated as element reference
                             ElementElement elem = new ElementElement();
@@ -679,7 +683,7 @@ public class SchemaGen
                             addItemDocumentation(struct, elem);
                             cdef.getParticleList().add(elem);
                             
-                        }
+//                        }
                     }
                 } else {
                     m_context.addError("Unsupported binding construct", comp);
@@ -873,29 +877,30 @@ public class SchemaGen
         MappingElementBase mapping = detail.getMapping();
         MappingElementBase base = detail.getExtensionBase();
         if (base == null) {
-            if (detail.isGroup()) {
-                
-                // create type using references to group and/or attributeGroup
-                SequenceElement seq = new SequenceElement();
-                if (detail.hasChild()) {
-                    GroupRefElement gref = new GroupRefElement();
-                    setGroupRef(detail.getOtherName(), gref, hold);
-                    seq.getParticleList().add(gref);
-                }
-                type.setContentDefinition(seq);
-                if (detail.hasAttribute()) {
-                    AttributeGroupRefElement gref = new AttributeGroupRefElement();
-                    setGroupRef(detail.getOtherName(), gref, hold);
-                    type.getAttributeList().add(gref);
-                }
-                
-            } else {
+//            if (detail.isGroup()) {
+//                
+//                // create type using references to group and/or attributeGroup
+//                SequenceElement seq = new SequenceElement();
+//                if (detail.hasChild()) {
+//                    GroupRefElement gref = new GroupRefElement();
+//                    setGroupRef(detail.getOtherName(), gref, hold);
+//                    seq.getParticleList().add(gref);
+//                }
+//                type.setContentDefinition(seq);
+//                if (detail.hasAttribute()) {
+//                    AttributeGroupRefElement gref = new AttributeGroupRefElement();
+//                    setGroupRef(detail.getOtherName(), gref, hold);
+//                    type.getAttributeList().add(gref);
+//                }
+//                
+//            } else {
                 
                 // create type directly
-                type.setContentDefinition(buildCompositor(mapping, 0, false, hold));
+                final CommonCompositorDefinition compositor = buildCompositor(mapping, 0, false, hold);
+                type.setContentDefinition(compositor);
                 fillAttributes(mapping, 0, type.getAttributeList(), hold);
                 
-            }
+//            }
         } else {
             
             // create type as extension of base type
@@ -1110,7 +1115,7 @@ public class SchemaGen
         }
         
         // validate the schemas and report any problems
-        ValidationUtils.validateSchemas(schemas, vctx);
+//        ValidationUtils.validateSchemas(schemas, vctx);
         ArrayList probs = vctx.getProblems();
         if (probs.size() > 0) {
             for (int j = 0; j < probs.size(); j++) {

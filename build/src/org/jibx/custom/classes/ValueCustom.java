@@ -313,6 +313,10 @@ public class ValueCustom extends SharedValueBase
         
         // fill in the details of type information
         IClass info = icl.getClassInfo(type);
+        if( info == null ) {
+          System.err.println("Failed to lookup class info for: " + type);
+          return;
+        }
         fillType(info, req, style);
         if (isCollection()) {
             if (getItemType() == null) {

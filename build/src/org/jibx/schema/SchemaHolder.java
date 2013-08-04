@@ -147,7 +147,7 @@ public class SchemaHolder extends HolderBase
                 String ns = holder.getNamespace();
                 String file = holder.getFileName();
                 if (ns == null || ns.equals(getNamespace())) {
-                    if (file != null) {
+                    if (file != null && getFileName( ).equals( holder.getFileName( ) )) {
                         IncludeElement inc = new IncludeElement();
                         inc.setLocation(file);
                         m_schema.getSchemaChildren().add(inc);

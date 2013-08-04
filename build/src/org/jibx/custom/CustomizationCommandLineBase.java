@@ -171,7 +171,7 @@ public abstract class CustomizationCommandLineBase
                 // report on the configuration
                 if (m_verbose) {
                     verboseDetails();
-                    System.out.println("Output to directory " + m_generateDirectory);
+//                    System.out.println("Output to directory " + m_generateDirectory);
                 }
                 
                 // clean generate directory if requested

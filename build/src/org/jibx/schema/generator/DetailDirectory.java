@@ -226,7 +226,8 @@ public class DetailDirectory
                     // no nested definition, check for mapping reference
                     MappingElement ref = (MappingElement)struct.getEffectiveMapping();
                     if (ref == null) {
-                        m_context.addError("No handling defined for empty structure with no mapping reference", struct);
+                      // GRZE:NOTE: we need to treat this as a non-error because of empty <structure>s
+                      // m_context.addError("No handling defined for empty structure with no mapping reference", struct);
                     } else {
                         
                         // get the referenced mapping information
@@ -247,7 +248,8 @@ public class DetailDirectory
                             if (ref.getName() == null) {
                                 
                                 // abstract inline treated as group
-                                detail.setGroup(true);
+//                              detail.setGroup(true);
+                              detail.setElement(true);
                                 
                             } else {
                                 

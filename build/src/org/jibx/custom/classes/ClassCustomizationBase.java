@@ -126,19 +126,9 @@ public abstract class ClassCustomizationBase extends CustomizationCommandLineBas
      * verbose output, but the base class implementation should be called first.
      */
     protected void verboseDetails() {
-        System.out.println("Using class loading paths:");
-        for (int i = 0; i < m_classPaths.size(); i++) {
-            System.out.println(" " + m_classPaths.get(i));
-        }
-        System.out.println("Using source loading paths:");
-        for (int i = 0; i < m_sourcePaths.size(); i++) {
-            System.out.println(" " + m_sourcePaths.get(i));
-        }
-        System.out.println("Starting from classes:");
-        List types = getExtraArgs();
-        for (int i = 0; i < types.size(); i++) {
-            System.out.println(" " + types.get(i));
-        }
+//        System.err.println("Using class loading paths:" + m_classPaths);
+//        System.err.println("Using source loading paths:" + m_sourcePaths);
+//        System.err.println("Starting from classes:" + getExtraArgs( ));
     }
     
     /**

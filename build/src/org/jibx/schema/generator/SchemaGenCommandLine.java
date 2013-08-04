@@ -121,7 +121,7 @@ public class SchemaGenCommandLine extends ClassCustomizationBase
     private boolean addUriNamePair(String text) {
         int split = text.indexOf('=');
         if (split >= 0) {
-            String key = text.substring(split);
+            String key = text.substring(0,split);
             if (m_uriNames.containsKey(key)) {
                 System.err.println("Duplicate namespace URI for uri=name parameter: " + key);
             } else {
