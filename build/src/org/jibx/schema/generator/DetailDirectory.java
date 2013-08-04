@@ -248,8 +248,7 @@ public class DetailDirectory
                             if (ref.getName() == null) {
                                 
                                 // abstract inline treated as group
-//                              detail.setGroup(true);
-                              detail.setElement(true);
+                              detail.setGroup(true);
                                 
                             } else {
                                 

@@ -525,7 +525,7 @@ public class SchemaGen
                     if (detail.isElement()) {
                         
                         // structure with concrete mapping
-                        setElementRef(detail.getOtherName(), elem, hold);
+                        setElementRef(detail.getTypeName(), elem, hold);
                         isref = true;
                         
                     } else {
@@ -635,7 +635,7 @@ public class SchemaGen
                         // item type with concrete mapping, make it an element
                         MappingDetail detail = m_detailDirectory.getMappingDetail((MappingElementBase)ref);
                         ElementElement item = new ElementElement();
-                        QName oname = detail.getOtherName();
+                        QName oname = detail.getTypeName();
                         setElementRef(oname, item, hold);
                         item.setMinOccurs(Count.COUNT_ZERO);
                         item.setMaxOccurs(Count.COUNT_UNBOUNDED);
@@ -662,28 +662,28 @@ public class SchemaGen
                         
                         // handle mapping reference based on form and name use
                         MappingDetail detail = m_detailDirectory.getMappingDetail(ref);
-//                        if (ref.isAbstract()) {
-//                            
-//                            // abstract inline treated as group
-//                            GroupRefElement group = new GroupRefElement();
-//                            setGroupRef(detail.getOtherName(), group, hold);
-//                            if (comp.isOptional()) {
-//                                group.setMinOccurs(Count.COUNT_ZERO);
-//                            }
-//                            cdef.getParticleList().add(group);
-//                            
-//                        } else {
+                        if (ref.isAbstract()) {
+                            
+                            // abstract inline treated as group
+                            GroupRefElement group = new GroupRefElement();
+                            setGroupRef(detail.getTypeName(), group, hold);
+                            if (comp.isOptional()) {
+                                group.setMinOccurs(Count.COUNT_ZERO);
+                            }
+                            cdef.getParticleList().add(group);
+                            
+                        } else {
                             
                             // concrete treated as element reference
                             ElementElement elem = new ElementElement();
-                            setElementRef(detail.getOtherName(), elem, hold);
+                            setElementType(detail.getTypeName(), elem, hold);
                             if (comp.isOptional()) {
                                 elem.setMinOccurs(Count.COUNT_ZERO);
                             }
                             addItemDocumentation(struct, elem);
                             cdef.getParticleList().add(elem);
                             
-//                        }
+                        }
                     }
                 } else {
                     m_context.addError("Unsupported binding construct", comp);
@@ -877,30 +877,30 @@ public class SchemaGen
         MappingElementBase mapping = detail.getMapping();
         MappingElementBase base = detail.getExtensionBase();
         if (base == null) {
-//            if (detail.isGroup()) {
-//                
-//                // create type using references to group and/or attributeGroup
-//                SequenceElement seq = new SequenceElement();
-//                if (detail.hasChild()) {
-//                    GroupRefElement gref = new GroupRefElement();
-//                    setGroupRef(detail.getOtherName(), gref, hold);
-//                    seq.getParticleList().add(gref);
-//                }
-//                type.setContentDefinition(seq);
-//                if (detail.hasAttribute()) {
-//                    AttributeGroupRefElement gref = new AttributeGroupRefElement();
-//                    setGroupRef(detail.getOtherName(), gref, hold);
-//                    type.getAttributeList().add(gref);
-//                }
-//                
-//            } else {
+            if (detail.isGroup()) {
+                
+                // create type using references to group and/or attributeGroup
+                SequenceElement seq = new SequenceElement();
+                if (detail.hasChild()) {
+                    GroupRefElement gref = new GroupRefElement();
+                    setGroupRef(detail.getTypeName(), gref, hold);
+                    seq.getParticleList().add(gref);
+                }
+                type.setContentDefinition(seq);
+                if (detail.hasAttribute()) {
+                    AttributeGroupRefElement gref = new AttributeGroupRefElement();
+                    setGroupRef(detail.getOtherName(), gref, hold);
+                    type.getAttributeList().add(gref);
+                }
+                
+            } else {
                 
                 // create type directly
                 final CommonCompositorDefinition compositor = buildCompositor(mapping, 0, false, hold);
                 type.setContentDefinition(compositor);
                 fillAttributes(mapping, 0, type.getAttributeList(), hold);
                 
-//            }
+            }
         } else {
             
             // create type as extension of base type
@@ -976,7 +976,7 @@ public class SchemaGen
         MappingElementBase mapping = detail.getMapping();
         if (detail.isGroup()) {
             // TODO: extend base type for group/attributeGroup?
-            QName qname = detail.getOtherName();
+            QName qname = detail.getTypeName();
             SchemaHolder hold = findSchema(qname.getUri());
             if (detail.hasChild()) {
                 GroupElement group = new GroupElement();

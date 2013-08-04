@@ -250,7 +250,7 @@ file has been tested with ant version 1.6.1.
   </target>
   
   <!-- Compile the tools code -->
-  <target name="compile-tools" depends="jar-schema">
+  <target name="compile-tools" >
     <delete quiet="true" dir="${toolsdest}"/>
     <mkdir dir="${toolsdest}"/>
     <javac srcdir="${src}"
